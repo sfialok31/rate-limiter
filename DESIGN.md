@@ -85,7 +85,17 @@ Redis is single-threaded, so no other redis commands can interleave with the lua
 - Spring Boot
 - Redis java client - jedis
 
-## 9. Limitations
+## 9. Deployment
+
+| Approach | Pros | Cons |
+|---|---|---|
+| API Gateway | Centralized | Less flexible |
+| Dedicated Service | Reusable | Extra latency |
+| Library | Low latency | Harder to update |
+
+For this project, we implement it as a **library** since it provides low latency, and is easy to integrate into multiple services while providing distributed rate limiting via redis.
+
+## 10. Limitations
 
 - Only uses one algorithm - token bucket, no support for other algorithms.
 - Only handles rate-limiting users based on their ip. This can be weak (NAT, shared IPs)
