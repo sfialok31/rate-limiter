@@ -1,0 +1,4 @@
+dependencies {
+    implementation("org.projectlombok:lombok:1.18.44")
+    api("io.projectreactor:reactor-core:3.8.4")
+}
