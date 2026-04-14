@@ -32,7 +32,7 @@ RateLimitDetails
 - requests_remaining
 - allowed
 - reset_after_ms
-- reset_at_epoc_ms
+- reset_at_epoch_ms
 
 RateLimitDetails tryRateLimit(ip)
 ```
@@ -107,7 +107,7 @@ For this project, we implement it as a **library** since it provides low latency
 
 The project consists of four modules -
 1. rate-limiter-core: Contains the core rate-limiter interface and models.
-2. rate-limiter-redis: Contains reactive and blocking implementation of rate-limiters.
+2. rate-limiter-redis: Contains reactive and blocking implementation of rate-limiters with redis.
 3. reactive-rate-limiter-spring-boot-starter: Contains a **reactive web filter** for rate limiting with spring-webflux.
 4. rate-limiter-spring-boot-starter: Contains a non-reactive filter for rate limiting with spring-web.
 
