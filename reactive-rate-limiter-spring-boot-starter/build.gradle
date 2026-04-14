@@ -1,0 +1,7 @@
+dependencies {
+    api project(':rate-limiter-redis')
+    implementation 'org.springframework.boot:spring-boot-autoconfigure:4.0.5'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux:4.0.5'
+    implementation "org.springframework.boot:spring-boot-starter-data-redis-reactive:4.0.5"
+    implementation "org.projectlombok:lombok:1.18.44"
+}

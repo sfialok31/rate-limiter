@@ -14,7 +14,7 @@ Design a distributed rate-limiter for API requests.
   - Number of requests remaining
   - Limit reset after (duration)
   - Limit reset at (timestamp)
-- Configurable token bucket algorithm parameters like capactity (C),  refill rate (T/S) where T = tokens to refill, S = refill interval
+- Configurable token bucket algorithm parameters like `capactity (C)`,  `refill rate (T/S)` where `T = tokens to refill`, `S = refill interval`
 
 ### Non-Functional
 - Highly available rate-limiter.
@@ -26,21 +26,29 @@ Design a distributed rate-limiter for API requests.
 
 ---
 
-RateLimitResult
-- ip
+```
+RateLimitDetails
+- key
 - requests_remaining
-- is_rate_limited
-- reset_after
-- reset_at
+- allowed
+- reset_after_ms
+- reset_at_epoc_ms
 
-`RateLimitResult checkRateLimit(ip)`
+RateLimitDetails tryRateLimit(ip)
+```
 
 HTTP API
-If rate limited:
-- Response code: 429 Too Many Requests
-- Response headers: Retry-After, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset
+
+&emsp;If rate limited:
+
+```
+Response code: 429 Too Many Requests
+Response headers: Retry-After, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset
+```
+ 
 Else:
-- Standard HTTP Response
+
+&emsp;Standard HTTP Response (`200 OK` etc)
 
 ## 4. Algorithm Choice
 
@@ -59,16 +67,18 @@ tokens are refilled in the bucket at regular intervals.
 
 Externalized State which can be accessed by all rate-limiter replicas and provides sub-ms latency.
 
-redis key - "bucket_${ip}"
+```
+redis key - "rate_limit:${ip}"
 redis value - {"tokens", "last_refill_time"}
-expiry - (capacity*refill_interval)/refill_tokens + 1
-
+expiry - math.ceil((capacity / refill_rate) * refill_interval_ms)
+```
 ---
 
-## 6. How to Handle Concurrency?
+## 6. Concurrency Handling
 
-Use Lua Script for atomicity.
-Redis is single-threaded, so no other redis commands can interleave with the lua script.
+- Use **Lua Script** for atomicity.
+- Redis is single-threaded, so no other redis commands can interleave with the lua script.
+- Uses **request coalescing** when reloading lua script onto redis server in case it restarts. This is to prevent **thundering herd problem** if multiple requests try reloading script at the same time.
 
 --- 
 
@@ -83,7 +93,7 @@ Redis is single-threaded, so no other redis commands can interleave with the lua
 
 - Java
 - Spring Boot
-- Redis java client - jedis
+- Redis java client - lettuce
 
 ## 9. Deployment
 
@@ -94,6 +104,12 @@ Redis is single-threaded, so no other redis commands can interleave with the lua
 | Library | Low latency | Harder to update |
 
 For this project, we implement it as a **library** since it provides low latency, and is easy to integrate into multiple services while providing distributed rate limiting via redis.
+
+The project consists of four modules -
+1. rate-limiter-core: Contains the core rate-limiter interface and models.
+2. rate-limiter-redis: Contains reactive and blocking implementation of rate-limiters.
+3. reactive-rate-limiter-spring-boot-starter: Contains a **reactive web filter** for rate limiting with spring-webflux.
+4. rate-limiter-spring-boot-starter: Contains a non-reactive filter for rate limiting with spring-web.
 
 ## 10. Limitations
 

@@ -1,6 +1,7 @@
 package com.sfialok.ratelimiter.redis;
 
 import com.sfialok.ratelimiter.core.RateLimitDetails;
+import com.sfialok.ratelimiter.redis.sync.LettuceRedisEvalExecutor;
 import com.sfialok.ratelimiter.redis.sync.RedisTokenBucketRateLimiter;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
@@ -29,7 +30,7 @@ public class Main {
                     1,
                     1000,
                     Clock.systemDefaultZone(),
-                    commands
+                    new LettuceRedisEvalExecutor(commands)
             );
         // Safe to call from multiple threads
         final ExecutorService executor = Executors.newFixedThreadPool(10);
