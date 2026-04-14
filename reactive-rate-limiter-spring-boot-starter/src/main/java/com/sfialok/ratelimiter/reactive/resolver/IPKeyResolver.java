@@ -1,4 +1,4 @@
-package com.sfialok.ratelimiter.resolver;
+package com.sfialok.ratelimiter.reactive.resolver;
 
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;

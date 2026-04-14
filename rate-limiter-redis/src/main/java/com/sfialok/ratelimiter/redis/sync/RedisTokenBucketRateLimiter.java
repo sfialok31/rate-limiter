@@ -54,6 +54,11 @@ public class RedisTokenBucketRateLimiter implements RateLimiter {
         return parseResult(key, result);
     }
 
+    @Override
+    public int getLimit() {
+        return capacity;
+    }
+
     private List<Object> runEval(final String key, final long timestamp) {
         return redisEvalExecutor.evalSha(
                 scriptSHA,

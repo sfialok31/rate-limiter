@@ -1,10 +1,9 @@
-package com.sfialok.ratelimiter.filter;
+package com.sfialok.ratelimiter.reactive.filter;
 
 
 import com.sfialok.ratelimiter.redis.reactive.ReactiveRateLimiter;
-import com.sfialok.ratelimiter.resolver.KeyResolver;
+import com.sfialok.ratelimiter.reactive.resolver.KeyResolver;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;

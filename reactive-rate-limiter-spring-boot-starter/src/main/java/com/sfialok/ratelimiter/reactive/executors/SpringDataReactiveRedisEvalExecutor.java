@@ -1,4 +1,4 @@
-package com.sfialok.ratelimiter.executors;
+package com.sfialok.ratelimiter.reactive.executors;
 
 import com.sfialok.ratelimiter.redis.reactive.ReactiveRedisEvalExecutor;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
