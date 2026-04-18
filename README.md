@@ -113,6 +113,11 @@ cd demo-spring-app
 ./gradlew bootRun
 ```
 
+## Upcoming features
+
+Configurable Policies (global, per ip, per endpoint)
+Configurable rate-limiting algorithms (like sliding window vs token bucket)
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
