@@ -1,22 +1,6 @@
-package com.sfialok.ratelimiter.redis;
-
-import com.sfialok.ratelimiter.core.RateLimitDetails;
-import com.sfialok.ratelimiter.redis.sync.LettuceRedisEvalExecutor;
-import com.sfialok.ratelimiter.redis.sync.RedisTokenBucketRateLimiter;
-import io.lettuce.core.RedisClient;
-import io.lettuce.core.RedisURI;
-import io.lettuce.core.api.StatefulRedisConnection;
-import io.lettuce.core.api.sync.RedisCommands;
-
-import java.time.Clock;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-public class Main {
-
-    public static void main(String[] args) throws InterruptedException {
-        RedisURI uri = RedisURI.Builder
+### Usage Example
+```java
+RedisURI uri = RedisURI.Builder
                 .redis("localhost", 6379)
                 .build();
 
@@ -46,5 +30,4 @@ public class Main {
 
         connection.close();
         client.shutdown();
-    }
-}
+```
