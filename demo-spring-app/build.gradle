@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.sfialok.demo'
+version = '1.0.0'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation("com.sfialok.ratelimiter:reactive-rate-limiter-spring-boot-starter:1.0.0")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:4.0.5")
+    implementation("org.projectlombok:lombok:1.18.44")
+}

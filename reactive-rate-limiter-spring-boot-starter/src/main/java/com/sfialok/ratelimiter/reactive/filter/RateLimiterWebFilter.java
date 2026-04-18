@@ -30,6 +30,10 @@ public class RateLimiterWebFilter implements WebFilter {
         return keyResolver.resolve(exchange)
                 .flatMap(key -> reactiveRateLimiter.tryRateLimit(key))
                 .flatMap(rateLimitDetails -> {
+                    exchange.getResponse().getHeaders()
+                            .add("X-RateLimit-Limit", String.valueOf(reactiveRateLimiter.getLimit()));
+                    exchange.getResponse().getHeaders()
+                            .add("X-RateLimit-Remaining", String.valueOf(rateLimitDetails.requestsRemaining()));
                     if (rateLimitDetails.allowed()) {
                         return chain.filter(exchange);
                     }
@@ -40,10 +44,6 @@ public class RateLimiterWebFilter implements WebFilter {
                     exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
                     exchange.getResponse().getHeaders()
                             .add("Retry-After", String.valueOf(rateLimitDetails.retryAfterMs()/1000));
-                    exchange.getResponse().getHeaders()
-                            .add("X-RateLimit-Limit", String.valueOf(reactiveRateLimiter.getLimit()));
-                    exchange.getResponse().getHeaders()
-                            .add("X-RateLimit-Remaining", String.valueOf(rateLimitDetails.requestsRemaining()));
                     exchange.getResponse().getHeaders()
                             .add("X-RateLimit-Reset", formattedDateTime);
                     return exchange.getResponse().setComplete();
