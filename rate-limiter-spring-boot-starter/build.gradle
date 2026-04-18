@@ -3,6 +3,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-autoconfigure:4.0.5'
     implementation 'org.springframework.boot:spring-boot-starter-web:4.0.5'
     implementation "org.springframework.boot:spring-boot-starter-data-redis:4.0.5"
+    implementation "org.apache.commons:commons-lang3:3.20.0"
     compileOnly "org.projectlombok:lombok:1.18.44"
     annotationProcessor "org.projectlombok:lombok:1.18.44"
 }

@@ -1,19 +1,24 @@
 package com.sfialok.ratelimiter.reactive.filter;
 
 
+import com.sfialok.ratelimiter.core.RateLimitDetails;
 import com.sfialok.ratelimiter.redis.reactive.ReactiveRateLimiter;
 import com.sfialok.ratelimiter.reactive.resolver.KeyResolver;
+import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.net.SocketException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Log4j2
 public class RateLimiterWebFilter implements WebFilter {
 
     final ReactiveRateLimiter reactiveRateLimiter;
@@ -28,7 +33,22 @@ public class RateLimiterWebFilter implements WebFilter {
     @Override
     public Mono<Void> filter(final ServerWebExchange exchange, final WebFilterChain chain) {
         return keyResolver.resolve(exchange)
-                .flatMap(key -> reactiveRateLimiter.tryRateLimit(key))
+                .flatMap(key ->
+                        reactiveRateLimiter.tryRateLimit(key)
+                                .onErrorResume(ex -> {
+                                    // fail-open in case of socket exception
+                                    if (ExceptionUtils.hasCause(ex, SocketException.class)) {
+                                        log.warn("Got Socket exception connecting with redis, failed open the request with key {}", key);
+                                        return Mono.just(new RateLimitDetails(
+                                                key,
+                                                reactiveRateLimiter.getLimit(),
+                                                true,
+                                                -1,
+                                                -1
+                                        ));
+                                    }
+                                    return Mono.error(ex);
+                                }))
                 .flatMap(rateLimitDetails -> {
                     exchange.getResponse().getHeaders()
                             .add("X-RateLimit-Limit", String.valueOf(reactiveRateLimiter.getLimit()));
